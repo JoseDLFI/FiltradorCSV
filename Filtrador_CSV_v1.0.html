@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Filtrador CSV v1.0 - Centro Meteorológico Provincial Sancti Spíritus, Cuba">
+    <meta name="author" content="CMPSS Sancti Spíritus">
+    <meta name="generator" content="Aplicación 100% offline para filtrar archivos CSV">
+    <title>Filtrador CSV v1.0 - CMPSS</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- ICONOS DE FONT AWESOME si internet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ICONO PERSONALIZADO -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+
+    <style>
+    /* 
+    ==============================================
+    FILTRADOR CSV UNIVERSAL v1.0 - CMPSS CUBA
+    CSS COMPLETO - CENTRO METEOROLÓGICO PROVINCIAL
+    ==============================================
+    */
+
+    /* RESET Y CONFIGURACIONES BÁSICAS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f7fa;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* HEADER */
+header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 25px 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.app-logo {
+    fill: #fff;
+    height: 1.8rem;
+    vertical-align: middle;
+    margin-right: 10px;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+}
+
+.subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+/* BARRA DE ESTADO */
+.status-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.status-step {
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+}
+
+.status-step.active {
+    background-color: #4CAF50;
+    transform: scale(1.05);
+}
+
+/* CONTENIDO PRINCIPAL */
+main {
+    padding: 30px;
+}
+
+.step-container {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.step-container.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* TARJETAS */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    border: 1px solid #eaeaea;
+}
+
+.card h2 {
+    color: #1e3c72;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.instruction {
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* ÁREA DE CARGA */
+.upload-area {
+    border: 3px dashed #4CAF50;
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.upload-area:hover {
+    background-color: #f0f9ff;
+    border-color: #2196F3;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #4CAF50;
+    margin-bottom: 15px;
+}
+
+.upload-area p {
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+#fileInput {
+    display: none;
+}
+
+/* BOTONES DE ACCIÓN DE ARCHIVOS */
+.file-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eaeaea;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.btn-danger {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+}
+
+/* BOTÓN ELIMINAR POR ARCHIVO */
+.delete-file-btn {
+    background: none;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-left: auto;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.delete-file-btn:hover {
+    background-color: #ffebee;
+}
+
+/* LISTA DE ARCHIVOS MEJORADA */
+#fileList li {
+    padding: 8px 12px;
+    background-color: white;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* BOTONES */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3d8b40;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+/* LISTA DE ARCHIVOS */
+.file-list {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #4CAF50;
+}
+
+.file-list h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+#fileList {
+    list-style-type: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#fileList li {
+    padding: 8px 12px;
+    background-color: white;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#fileList li i {
+    color: #4CAF50;
+}
+
+/* FORMULARIOS */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.form-help {
+    margin-top: 8px;
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* SELECTOR DE COLUMNAS */
+.columns-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+}
+
+.columns-section h4 {
+    color: #1e3c72;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.columns-section h4 .file-icon {
+    color: #4CAF50;
+}
+
+.columns-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.column-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: all 0.2s;
+}
+
+.column-checkbox:hover {
+    background-color: #f0f9ff;
+    border-color: #4CAF50;
+}
+
+.column-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.column-checkbox label {
+    cursor: pointer;
+    user-select: none;
+    flex: 1;
+}
+
+.selection-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* PROCESANDO */
+.loading, .processing-info {
+    text-align: center;
+    padding: 30px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.progress-container {
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #4CAF50;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.success-icon {
+    color: #4CAF50;
+    font-size: 3rem;
+    margin-bottom: 15px;
+    margin: auto;
+}
+
+.success-text {
+    margin: auto;
+}
+
+.success-h3 {
+  display: inline-flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* FOOTER */
+footer {
+    padding: 20px 30px;
+    background-color: #f8f9fa;
+    text-align: center;
+    color: #666;
+    border-top: 1px solid #eaeaea;
+}
+
+footer p {
+    margin-bottom: 5px;
+}
+
+.footer-note {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .container {
+        border-radius: 0;
+    }
+    
+    main {
+        padding: 20px 15px;
+    }
+    
+    .status-step {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    .columns-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <svg class="app-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc. --><path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z"/></svg>
+                Filtrador CSV v1.0    
+            </h1> 
+
+            <div class="status-bar">
+                <div class="status-step active" id="step1">1. Cargar CSV</div>
+                <div class="status-step" id="step2">2. Filtrar </div>
+                <div class="status-step" id="step3">3. Seleccionar Columnas</div>
+                <div class="status-step" id="step4">4. Descargar</div>
+            </div>
+        </header>
+
+        <main>
+            <!-- PASO 1: Carga de archivos (siempre visible inicialmente) -->
+            <div id="step1-container" class="step-container active">
+                <div class="card">
+                    <h2><i class="fas fa-file-upload"></i> Paso 1: Cargar Archivos CSV</h2>
+                    <p class="instruction">Selecciona uno o múltiples archivos CSV para procesar. El sistema detectará automáticamente las columnas disponibles.</p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <p>Arrastra tus archivos CSV aquí o haz clic para seleccionar</p>
+                        <input type="file" id="fileInput" accept=".csv" multiple>
+                        <label for="fileInput" class="btn btn-primary">
+                            <i class="fas fa-folder-open"></i> Seleccionar Archivos
+                        </label>
+                    </div>
+                    
+                    <div class="file-list" id="fileListContainer" style="display: none;">
+                     <h3>Archivos cargados: <span id="fileCount">0</span></h3>
+                      <ul id="fileList"></ul>
+    
+                      <!-- AGREGAR ESTOS BOTONES NUEVOS -->
+                      <div class="file-actions">
+                          <button id="addMoreFiles" class="btn btn-small">
+                              <i class="fas fa-plus"></i> Agregar más archivos
+                         </button>
+                         <button id="clearAllFiles" class="btn btn-small btn-danger">
+                             <i class="fas fa-trash"></i> Vaciar todos
+                         </button>
+                         <button id="continueFromStep1" class="btn btn-small btn-primary">
+                             <i class="fas fa-arrow-right"></i> Continuar
+                         </button>
+                      </div>
+                    </div>
+                    
+                    <div class="loading" id="loadingStep1" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Analizando archivos CSV...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 2: Filtrar por provincia (oculto inicialmente) -->
+            <div id="step2-container" class="step-container" style="display: none;">
+                <div class="card">                                    
+                    <h2><i class="fas fa-filter"></i> Paso 2: Filtrar </h2>
+
+                    <!-- PRIMER SELECTOR: Para elegir QUÉ COLUMNA usar para filtrar -->
+                    <div class="form-group">
+                        <label for="filterColumnSelect"><i class="fas fa-columns"></i> Columna para filtrar:</label>
+                        <select id="filterColumnSelect" class="form-control">
+                            <option value="" disabled selected>Cargando columnas...</option>
+                        </select>
+                        <p class="form-help">Selecciona la columna que quieres usar para filtrar</p>
+                    </div>
+                    
+                    <!-- SEGUNDO SELECTOR: Para elegir QUÉ VALOR de esa columna filtrar -->
+                    <div class="form-group">
+                        <label for="provinceFilter"><i class="fas fa-filter"></i> Valor a filtrar:</label>
+                        <select id="provinceFilter" class="form-control" disabled>
+                            <option value="" disabled selected>Primero selecciona una columna</option>
+                        </select>
+                        <p class="form-help">Seleccionarás el valor específico para filtrar todos los archivos</p>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="prevStep1" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                        <button id="nextStep2" class="btn btn-primary" disabled>
+                            Continuar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 3: Seleccionar columnas por CSV (oculto inicialmente) -->
+            <div id="step3-container" class="step-container" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-columns"></i> Paso 3: Seleccionar Columnas a Extraer</h2>
+                    <p class="instruction">Para cada archivo, selecciona las columnas que quieres incluir en el resultado.</p>
+                    
+                    <div id="columnsSelectionContainer">
+                        <!-- Aquí se generarán dinámicamente las selecciones por archivo -->
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Preparando selección de columnas...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="selection-actions">
+                        <button id="selectAllCols" class="btn btn-small">
+                            <i class="fas fa-check-square"></i> Seleccionar Todas
+                        </button>
+                        <button id="deselectAllCols" class="btn btn-small">
+                            <i class="fas fa-square"></i> Deseleccionar Todas
+                        </button>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="prevStep2" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                        <button id="nextStep3" class="btn btn-primary" disabled>
+                            <i class="fas fa-download"></i> Filtrar y Descargar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 4: Procesando (oculto inicialmente) -->
+            <div id="step4-container" class="step-container" style="display: none;">
+                <div class="card">
+                    <h2><i class="fas fa-download"></i> Paso 4: Descargando Archivos</h2>
+                    <p class="instruction">Procesando y generando archivos filtrados. Esto puede tomar unos momentos...</p>
+                    
+                    <div class="processing-info">
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <p id="progressText">Iniciando procesamiento...</p>
+                        <div id="downloadResults" style="display: none; padding: 15px">
+                            <h3 class="success-h3"><i class="fas fa-check-circle success-icon"></i> <span class="success-text"> Procesamiento completado</span></h3>
+                            <p style="margin-block: 10px;">Los archivos se han descargado automáticamente. Busca en tu carpeta de descargas los archivos con prefijo "Filtrado_".</p>
+                            <button id="restartProcess" class="btn btn-primary" style="margin-top: 10px;">
+                                <i class="fas fa-redo"></i> Procesar más archivos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p><i class="fas fa-info-circle"></i> Filtrador CSV v1.0 | Desarrollado para Centro Meteorológico Provincial Sancti Spíritus, Cuba por: José Alberto de la Fé Isaac</p>
+            <p class="footer-note">100% offline - Todos los procesamientos se realizan en tu navegador</p>
+        </footer>
+    </div>
+
+    <script>
+    /*
+    =======================================================================
+    JAVASCRIPT COMPLETO - CENTRO METEOROLÓGICO PROVINCIAL
+    Desarrollado por: José Alberto de la Fé Isaac - CMPSS Sancti Spíritus
+    =======================================================================
+    */
+    /**
+ * Esta aplicación permite filtrar múltiples archivos CSV por columna/provincia
+ * y extraer columnas específicas de cada archivo.
+ * 
+ * CARACTERÍSTICAS:
+ * - 100% offline (todo se ejecuta en el navegador)
+ * - Procesamiento por lotes de archivos CSV
+ * - Detección automática de columna "provincia"
+ * - Filtrado por provincia seleccionada
+ * - Selección individual de columnas por archivo
+ * - Descarga automática de resultados
+ */
+
+// =============================================
+// VARIABLES GLOBALES Y ESTADO DE LA APLICACIÓN
+// =============================================
+
+// Almacena los archivos CSV cargados por el usuario
+let uploadedFiles = [];
+
+// Almacena los datos analizados de cada archivo
+let filesData = [];
+
+// Almacena las columnas únicas detectadas en todos los archivos
+let allColumns = new Set();
+
+// Columna detectada para filtrar (por defecto "provincia")
+let filterColumn = 'provincia';
+
+// Valor seleccionado para filtrar (provincia seleccionada)
+let selectedProvince = '';
+
+// Mapeo de columnas seleccionadas por archivo
+// Ejemplo: { "nombre_archivo.csv": ["columna1", "columna2"] }
+let selectedColumnsByFile = {};
+
+// =============================================
+// INICIALIZACIÓN DE LA APLICACIÓN
+// =============================================
+
+// Cuando el DOM esté completamente cargado, configuramos los event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Aplicación Filtrador CSV v1.0 inicializada');
+    
+    // Configurar todos los event listeners
+    setupEventListeners();
+    
+    // Actualizar barra de estado
+    updateStatusBar(1);
+});
+
+// =============================================
+// CONFIGURACIÓN DE EVENT LISTENERS
+// =============================================
+
+/**
+ * Configura todos los event listeners de la aplicación
+ */
+function setupEventListeners() {
+    // 1. Input de archivos
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', handleFileSelection);
+    
+    // 2. Área de arrastre (drag & drop)
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    // Configurar drag & drop
+    uploadArea.addEventListener('dragover', handleDragOver);
+    uploadArea.addEventListener('dragleave', handleDragLeave);
+    uploadArea.addEventListener('drop', handleDrop);
+    
+    // 3. Botón "Agregar más archivos"
+    document.getElementById('addMoreFiles').addEventListener('click', () => {
+        fileInput.value = ''; // Resetear input para permitir seleccionar los mismos archivos
+        fileInput.click();
+    });
+    
+    // 4. Botón "Vaciar todos"
+    document.getElementById('clearAllFiles').addEventListener('click', clearAllFiles);
+    
+    // 5. Botón "Continuar" del Paso 1
+    document.getElementById('continueFromStep1').addEventListener('click', goToStep2);
+    
+    // 6. Navegación entre pasos
+    document.getElementById('nextStep2').addEventListener('click', goToStep3);
+    document.getElementById('nextStep3').addEventListener('click', processAndDownload);
+    document.getElementById('prevStep1').addEventListener('click', goToStep1);
+    document.getElementById('prevStep2').addEventListener('click', goToStep2);
+    document.getElementById('restartProcess').addEventListener('click', restartProcess);
+    
+    // 7. Acciones de selección de columnas
+    document.getElementById('selectAllCols').addEventListener('click', selectAllColumns);
+    document.getElementById('deselectAllCols').addEventListener('click', deselectAllColumns);
+    
+    // 8. Cambio en selector de provincia
+    document.getElementById('provinceFilter').addEventListener('change', function() {
+        selectedProvince = this.value;
+        document.getElementById('nextStep2').disabled = !selectedProvince;
+    });
+
+    // 9. Selector de columna para filtrar
+    document.getElementById('filterColumnSelect').addEventListener('change', function() {
+        filterColumn = this.value;
+        document.getElementById('provinceFilter').disabled = !filterColumn;
+        selectedProvince = ''; // Resetear provincia seleccionada
+        document.getElementById('nextStep2').disabled = true;
+    
+        // Cargar los valores de la nueva columna seleccionada
+        loadValuesForSelectedColumn();
+    });
+}
+
+/**
+ * Maneja la selección de archivos a través del input
+ */
+function handleFileSelection(event) {
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+    
+    processUploadedFiles(files, true); // true = modo agregar (append)
+}
+
+/**
+ * Maneja el evento de arrastrar archivos sobre el área
+ */
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('uploadArea').style.backgroundColor = '#e8f4fd';
+    document.getElementById('uploadArea').style.borderColor = '#2196F3';
+}
+
+/**
+ * Maneja el evento de salir del área de arrastre
+ */
+function handleDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('uploadArea').style.backgroundColor = '#f9f9f9';
+    document.getElementById('uploadArea').style.borderColor = '#4CAF50';
+}
+
+/**
+ * Maneja el evento de soltar archivos en el área
+ */
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    document.getElementById('uploadArea').style.backgroundColor = '#f9f9f9';
+    document.getElementById('uploadArea').style.borderColor = '#4CAF50';
+    
+    const files = Array.from(event.dataTransfer.files).filter(file => 
+        file.name.toLowerCase().endsWith('.csv')
+    );
+    
+    if (files.length === 0) {
+        alert('Por favor, suelta solo archivos CSV');
+        return;
+    }
+    
+    processUploadedFiles(files, true); // true = modo agregar (append)
+}
+
+// =============================================
+// PROCESAMIENTO DE ARCHIVOS CARGADOS
+// =============================================
+
+/**
+ * Procesa los archivos CSV cargados por el usuario
+ * @param {File[]} files - Archivos a procesar
+ * @param {boolean} appendMode - Si es true, agrega a los archivos existentes
+ */
+async function processUploadedFiles(files, appendMode = false) {
+    // Si no es modo agregar, limpiar datos anteriores
+    if (!appendMode) {
+        uploadedFiles = [];
+        filesData = [];
+        allColumns.clear();
+        selectedColumnsByFile = {};
+    }
+    
+    // Filtrar archivos duplicados (por nombre y tamaño)
+    const uniqueNewFiles = files.filter(newFile => {
+        return !uploadedFiles.some(existingFile => 
+            existingFile.name === newFile.name && 
+            existingFile.size === newFile.size &&
+            existingFile.lastModified === newFile.lastModified
+        );
+    });
+    
+    if (uniqueNewFiles.length === 0) {
+        if (files.length > 0) {
+            alert('Todos los archivos seleccionados ya están cargados.');
+        }
+        return;
+    }
+    
+    // Mostrar indicador de carga
+    document.getElementById('loadingStep1').style.display = 'block';
+    
+    try {
+        // Procesar cada archivo nuevo secuencialmente
+        for (let i = 0; i < uniqueNewFiles.length; i++) {
+            const file = uniqueNewFiles[i];
+            console.log(`Procesando archivo ${i+1}/${uniqueNewFiles.length}: ${file.name}`);
+            
+            // Leer y analizar el archivo CSV
+            const fileData = await readAndAnalyzeCSV(file);
+            
+            // Agregar a las listas
+            uploadedFiles.push(file);
+            filesData.push(fileData);
+            
+            // Agregar columnas al conjunto global (evita duplicados)
+            fileData.columns.forEach(col => allColumns.add(col));
+        }
+        
+        console.log('Análisis completado. Columnas detectadas:', Array.from(allColumns));
+        
+        // Ocultar indicador de carga
+        document.getElementById('loadingStep1').style.display = 'none';
+        
+        // Mostrar/actualizar lista de archivos
+        displayFileList();
+        
+        // Actualizar UI basado en si hay archivos cargados
+        updateStep1UI();
+        
+    } catch (error) {
+        console.error('Error procesando archivos:', error);
+        document.getElementById('loadingStep1').style.display = 'none';
+        alert('Error al procesar los archivos: ' + error.message);
+    }
+}
+
+/**
+ * Lee y analiza un archivo CSV, extrayendo encabezados y muestras de datos
+ */
+function readAndAnalyzeCSV(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const csvText = event.target.result;
+                
+                // Detectar delimitador (coma o punto y coma)
+                const delimiter = detectDelimiter(csvText);
+                
+                // Dividir en líneas
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                
+                if (lines.length === 0) {
+                    reject(new Error(`El archivo ${file.name} está vacío`));
+                    return;
+                }
+                
+                // Extraer encabezados (primera línea)
+                const headers = lines[0].split(delimiter).map(h => h.trim().replace(/"/g, ''));
+                
+                // Extraer algunas filas de muestra para análisis (máximo 10000)
+                const sampleRows = lines.slice(1, Math.min(10000, lines.length)).map(line => {
+                    const values = parseCSVLine(line, delimiter);
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    return row;
+                });
+                
+                // Extraer valores únicos para la columna de provincia (si existe)
+                const provinceValues = new Set();
+                const provinceColumn = headers.find(h => 
+                    h.toLowerCase().includes('provincia') 
+                );
+                
+                if (provinceColumn) {
+                    sampleRows.forEach(row => {
+                        if (row[provinceColumn]) {
+                            provinceValues.add(row[provinceColumn].trim());
+                        }
+                    });
+                }
+                
+                resolve({
+                    name: file.name,
+                    size: file.size,
+                    columns: headers,
+                    sampleRows: sampleRows,
+                    totalRows: lines.length - 1,
+                    provinceColumn: provinceColumn,
+                    provinceValues: Array.from(provinceValues)
+                });
+                
+            } catch (error) {
+                reject(new Error(`Error al analizar ${file.name}: ${error.message}`));
+            }
+        };
+        
+        reader.onerror = function() {
+            reject(new Error(`Error al leer el archivo ${file.name}`));
+        };
+        
+        reader.readAsText(file, 'UTF-8');
+    });
+}
+
+/**
+ * Detecta el delimitador usado en el CSV (coma, punto y coma o tabulación)
+ */
+function detectDelimiter(csvText) {
+    const firstLine = csvText.split('\n')[0];
+    
+    // Contar ocurrencias de delimitadores comunes
+    const commaCount = (firstLine.match(/,/g) || []).length;
+    const semicolonCount = (firstLine.match(/;/g) || []).length;
+    const tabCount = (firstLine.match(/\t/g) || []).length;
+    
+    // Devolver el delimitador más común
+    if (semicolonCount > commaCount && semicolonCount > tabCount) return ';';
+    if (tabCount > commaCount && tabCount > semicolonCount) return '\t';
+    return ','; // Por defecto, usar coma
+}
+
+/**
+ * Parsea una línea CSV, manejando campos entre comillas
+ */
+function parseCSVLine(line, delimiter) {
+    const result = [];
+    let currentField = '';
+    let insideQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        
+        if (char === '"') {
+            if (insideQuotes && nextChar === '"') {
+                // Comilla doble dentro de comillas (escape)
+                currentField += '"';
+                i++; // Saltar la siguiente comilla
+            } else {
+                // Comilla simple - alternar estado
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === delimiter && !insideQuotes) {
+            // Fin del campo
+            result.push(currentField.trim());
+            currentField = '';
+        } else {
+            // Carácter normal
+            currentField += char;
+        }
+    }
+    
+    // Agregar el último campo
+    result.push(currentField.trim());
+    
+    return result;
+}
+
+// =============================================
+// MANEJO DE LA INTERFAZ DE USUARIO - PASO 1
+// =============================================
+
+/**
+ * Muestra la lista de archivos cargados con botones para eliminar
+ */
+function displayFileList() {
+    const fileListElement = document.getElementById('fileList');
+    const fileCountElement = document.getElementById('fileCount');
+    
+    fileListElement.innerHTML = '';
+    
+    uploadedFiles.forEach((file, index) => {
+        const listItem = document.createElement('li');
+        listItem.dataset.index = index;
+        listItem.innerHTML = `
+            <i class="fas fa-file-csv"></i>
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">(${formatFileSize(file.size)})</span>
+            <button class="delete-file-btn" data-index="${index}" title="Eliminar este archivo">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        fileListElement.appendChild(listItem);
+    });
+    
+    // Agregar event listeners a los botones de eliminar
+    document.querySelectorAll('.delete-file-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const index = parseInt(this.dataset.index);
+            removeFileAtIndex(index);
+        });
+    });
+    
+    // Actualizar contador
+    fileCountElement.textContent = uploadedFiles.length;
+}
+
+/**
+ * Formatea el tamaño de archivo en KB o MB
+ */
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+/**
+ * Actualiza la UI del Paso 1 basado en si hay archivos cargados
+ */
+function updateStep1UI() {
+    const hasFiles = uploadedFiles.length > 0;
+    
+    // Mostrar/ocultar secciones basado en si hay archivos
+    document.getElementById('fileListContainer').style.display = hasFiles ? 'block' : 'none';
+    document.getElementById('continueFromStep1').style.display = hasFiles ? 'inline-flex' : 'none';
+    document.getElementById('clearAllFiles').style.display = hasFiles ? 'inline-flex' : 'none';
+    document.getElementById('addMoreFiles').style.display = hasFiles ? 'inline-flex' : 'none';
+    
+    // Actualizar mensaje en área de carga
+    const uploadArea = document.getElementById('uploadArea');
+    if (hasFiles) {
+        uploadArea.querySelector('p').textContent = 'Arrastra más archivos CSV aquí o haz clic para seleccionar';
+    } else {
+        uploadArea.querySelector('p').textContent = 'Arrastra tus archivos CSV aquí o haz clic para seleccionar';
+    }
+}
+
+/**
+ * Elimina un archivo específico por su índice
+ */
+function removeFileAtIndex(index) {
+    if (index < 0 || index >= uploadedFiles.length) return;
+    
+    // Remover de los arrays
+    uploadedFiles.splice(index, 1);
+    filesData.splice(index, 1);
+    
+    // Recalcular todas las columnas disponibles
+    allColumns.clear();
+    filesData.forEach(fileData => {
+        fileData.columns.forEach(col => allColumns.add(col));
+    });
+    
+    // Actualizar UI
+    displayFileList();
+    updateStep1UI();
+    
+    // Si se eliminó el último archivo, limpiar todo
+    if (uploadedFiles.length === 0) {
+        selectedColumnsByFile = {};
+        selectedProvince = '';
+        filterColumn = 'provincia';
+    }
+}
+
+/**
+ * Limpia todos los archivos cargados
+ */
+function clearAllFiles() {
+    if (uploadedFiles.length === 0) return;
+    
+    if (confirm(`¿Estás seguro de que quieres eliminar todos los archivos (${uploadedFiles.length} archivos)?`)) {
+        uploadedFiles = [];
+        filesData = [];
+        allColumns.clear();
+        selectedColumnsByFile = {};
+        selectedProvince = '';
+        filterColumn = 'provincia';
+        
+        // Actualizar UI
+        displayFileList();
+        updateStep1UI();
+        
+        // Resetear selectores en el Paso 2 si estamos ahí
+        if (document.getElementById('step2-container').style.display !== 'none') {
+            document.getElementById('filterColumnSelect').innerHTML = '<option value="" disabled selected>Cargando columnas...</option>';
+            document.getElementById('provinceFilter').innerHTML = '<option value="" disabled selected>Primero selecciona una columna</option>';
+            document.getElementById('provinceFilter').disabled = true;
+        }
+    }
+}
+
+// =============================================
+// FUNCIONES PARA FILTRADO POR COLUMNA
+// =============================================
+
+/**
+ * Carga todas las columnas disponibles en el selector de columnas para filtrar
+ */
+function loadFilterColumnSelector() {
+    const columnSelector = document.getElementById('filterColumnSelect');
+    const allColumns = getAllAvailableColumns();
+    
+    columnSelector.innerHTML = '';
+    
+    if (allColumns.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No se detectaron columnas';
+        option.disabled = true;
+        columnSelector.appendChild(option);
+        return;
+    }
+    
+    // Encontrar columna "provincia" por defecto
+    const defaultProvinceColumn = findProvinceColumn();
+    
+    // Agregar todas las columnas
+    allColumns.forEach(column => {
+        const option = document.createElement('option');
+        option.value = column;
+        option.textContent = column;
+        
+        // Seleccionar "provincia" por defecto si existe
+        if (column === defaultProvinceColumn) {
+            option.selected = true;
+            filterColumn = column;
+        }
+        
+        columnSelector.appendChild(option);
+    });
+    
+    // Si no se seleccionó automáticamente, seleccionar la primera
+    if (!filterColumn && allColumns.length > 0) {
+        filterColumn = allColumns[0];
+        columnSelector.value = filterColumn;
+    }
+    
+    // Ahora cargar los valores de la columna seleccionada
+    loadValuesForSelectedColumn();
+}
+
+/**
+ * Detecta todas las columnas disponibles y selecciona "provincia" por defecto si existe
+ * @returns {Array} Lista de todas las columnas únicas detectadas
+ */
+function getAllAvailableColumns() {
+    const allColsSet = new Set();
+    
+    filesData.forEach(fileData => {
+        fileData.columns.forEach(col => allColsSet.add(col));
+    });
+    
+    return Array.from(allColsSet).sort();
+}
+
+/**
+ * Encuentra la columna "provincia" (case-insensitive) entre todas las disponibles
+ * @returns {string|null} Nombre de la columna provincia o null si no existe
+ */
+function findProvinceColumn() {
+    const allColumns = getAllAvailableColumns();
+    
+    // Buscar coincidencias exactas primero
+    const exactMatch = allColumns.find(col => 
+        col.toLowerCase() === 'provincia'
+    );
+    if (exactMatch) return exactMatch;
+    
+    // Buscar que contenga "provincia"
+    const containsMatch = allColumns.find(col => 
+        col.toLowerCase().includes('provincia')
+    );
+    if (containsMatch) return containsMatch;
+    
+    // Buscar que contenga "prov"
+    const provMatch = allColumns.find(col => 
+        col.toLowerCase().includes('prov')
+    );
+    if (provMatch) return provMatch;
+    
+    return null;
+}
+
+/**
+ * Carga los valores únicos de la columna actualmente seleccionada para filtrar
+ */
+function loadValuesForSelectedColumn() {
+    const provinceFilter = document.getElementById('provinceFilter');
+    const allValues = new Set();
+    
+    // Recopilar todos los valores únicos de la columna seleccionada
+    filesData.forEach(fileData => {
+        // Encontrar el índice de la columna de filtro en este archivo
+        const filterColIndex = fileData.columns.findIndex(col => 
+            col === filterColumn
+        );
+        
+        if (filterColIndex !== -1) {
+            // Extraer valores de esta columna
+            fileData.sampleRows.forEach(row => {
+                const rowValues = Object.values(row);
+                if (rowValues[filterColIndex]) {
+                    allValues.add(rowValues[filterColIndex].trim());
+                }
+            });
+        }
+    });
+    
+    // Convertir a array y ordenar
+    const sortedValues = Array.from(allValues).sort();
+    
+    // Actualizar el selector
+    provinceFilter.innerHTML = '';
+    
+    if (sortedValues.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = `No hay valores en la columna "${filterColumn}"`;
+        option.disabled = true;
+        provinceFilter.appendChild(option);
+        document.getElementById('provinceFilter').disabled = true;
+        return;
+    }
+    
+    // Habilitar el selector
+    document.getElementById('provinceFilter').disabled = false;
+    
+    // Opción por defecto
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    defaultOption.textContent = `Selecciona un valor de "${filterColumn}"`;
+    provinceFilter.appendChild(defaultOption);
+    
+    // Agregar todos los valores
+    sortedValues.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        
+        // Auto-seleccionar "Sancti Spíritus" si existe
+        if (value.toLowerCase().includes('sancti') || 
+            value.toLowerCase().includes('spíritus') ||
+            value.toLowerCase().includes('espirituana')) {
+            option.selected = true;
+            selectedProvince = value;
+            document.getElementById('nextStep2').disabled = false;
+        }
+        
+        provinceFilter.appendChild(option);
+    });
+    
+    // Si no se auto-seleccionó nada, seleccionar la primera opción
+    if (!selectedProvince && sortedValues.length > 0) {
+        selectedProvince = sortedValues[0];
+        provinceFilter.value = selectedProvince;
+        document.getElementById('nextStep2').disabled = false;
+    }
+}
+
+// =============================================
+// NAVEGACIÓN ENTRE PASOS
+// =============================================
+
+/**
+ * Actualiza la barra de estado para resaltar el paso actual
+ */
+function updateStatusBar(stepNumber) {
+    // Remover clase "active" de todos los pasos
+    for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step${i}`).classList.remove('active');
+    }
+    
+    // Agregar clase "active" al paso actual
+    document.getElementById(`step${stepNumber}`).classList.add('active');
+}
+
+/**
+ * Navega al Paso 1 (Carga de archivos)
+ */
+function goToStep1() {
+    // Ocultar todos los contenedores
+    document.querySelectorAll('.step-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.remove('active');
+    });
+    
+    // Mostrar paso 1
+    document.getElementById('step1-container').style.display = 'block';
+    document.getElementById('step1-container').classList.add('active');
+    
+    // Actualizar barra de estado
+    updateStatusBar(1);
+    
+    // Actualizar UI del Paso 1
+    updateStep1UI();
+}
+
+/**
+ * Navega al Paso 2 (Filtrado por columna)
+ */
+function goToStep2() {
+    // Validar que haya archivos cargados
+    if (uploadedFiles.length === 0) {
+        alert('Por favor, carga al menos un archivo CSV primero.');
+        return;
+    }
+    
+    // Ocultar todos los contenedores
+    document.querySelectorAll('.step-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.remove('active');
+    });
+    
+    // Mostrar paso 2
+    document.getElementById('step2-container').style.display = 'block';
+    document.getElementById('step2-container').classList.add('active');
+    
+    // Actualizar barra de estado
+    updateStatusBar(2);
+    
+    // Cargar el selector de columnas y luego los valores
+    loadFilterColumnSelector();
+}
+
+/**
+ * Navega al Paso 3 (Selección de columnas)
+ */
+function goToStep3() {
+    // Validar que se haya seleccionado un valor para filtrar
+    if (!selectedProvince) {
+        alert('Por favor, selecciona un valor para filtrar');
+        return;
+    }
+    
+    // Ocultar todos los contenedores
+    document.querySelectorAll('.step-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.remove('active');
+    });
+    
+    // Mostrar paso 3
+    document.getElementById('step3-container').style.display = 'block';
+    document.getElementById('step3-container').classList.add('active');
+    
+    // Actualizar barra de estado
+    updateStatusBar(3);
+    
+    // Generar la interfaz para seleccionar columnas
+    generateColumnsSelectionUI();
+}
+
+// =============================================
+// SELECCIÓN DE COLUMNAS POR ARCHIVO
+// =============================================
+
+/**
+ * Detecta si una columna es de interés meteorológico común
+ */
+function isCommonMeteorologicalColumn(columnName) {
+    const col = columnName.toUpperCase().trim();
+    
+    // Columnas EXACTAS que nos interesan
+    if (['D', 'M', 'MS', 'MUNICIPIO'].includes(col)) {
+        return true;
+    }
+    
+    // Columnas que CONTIENEN ciertos patrones
+    if (col.includes('SPI')) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Genera la interfaz para seleccionar columnas por archivo
+ */
+function generateColumnsSelectionUI() {
+    const container = document.getElementById('columnsSelectionContainer');
+    
+    // Limpiar contenedor
+    container.innerHTML = '';
+    
+    // Para cada archivo, crear una sección de selección de columnas
+    filesData.forEach((fileData, index) => {
+        const section = document.createElement('div');
+        section.className = 'columns-section';
+        
+        // Filtrar columnas (excluir la columna de filtro)
+        const availableColumns = fileData.columns.filter(col => 
+            col !== filterColumn
+        );
+        
+        // Verificar si ya teníamos selección previa para este archivo
+        const previousSelection = selectedColumnsByFile[fileData.name] || [];
+        
+        // Si no hay selección previa, inicializar con columnas comunes
+        if (previousSelection.length === 0) {
+            const defaultSelected = availableColumns.filter(col => 
+                isCommonMeteorologicalColumn(col) || availableColumns.length <= 5
+            );
+            selectedColumnsByFile[fileData.name] = defaultSelected;
+        }
+        
+        // Crear HTML para la sección
+        section.innerHTML = `
+            <h4>
+                <i class="fas fa-file-csv file-icon"></i>
+                ${fileData.name} 
+                <span class="file-info">(${fileData.totalRows} filas, ${fileData.columns.length} columnas)</span>
+            </h4>
+            <div class="columns-container" id="columns-${index}">
+                <!-- Las checkboxes se generarán dinámicamente -->
+            </div>
+        `;
+        
+        container.appendChild(section);
+        
+        // Generar checkboxes para cada columna disponible
+        const columnsContainer = document.getElementById(`columns-${index}`);
+        availableColumns.forEach(column => {
+            // Determinar si esta columna debe estar checked por defecto
+            const isCommonColumn = isCommonMeteorologicalColumn(column);
+            const shouldBeChecked = selectedColumnsByFile[fileData.name]?.includes(column) || 
+                                   (isCommonColumn || availableColumns.length <= 5);
+            
+            const checkboxDiv = document.createElement('div');
+            checkboxDiv.className = 'column-checkbox';
+            
+            const checkboxId = `file-${index}-col-${column.replace(/\s+/g, '-')}`;
+            
+            checkboxDiv.innerHTML = `
+                <input type="checkbox" id="${checkboxId}" ${shouldBeChecked ? 'checked' : ''}>
+                <label for="${checkboxId}">${column} ${isCommonColumn ? '' : ''}</label> 
+            `;
+            
+            // Agregar event listener para actualizar la selección
+            const checkbox = checkboxDiv.querySelector('input');
+            checkbox.addEventListener('change', function() {
+                updateSelectedColumns(fileData.name, column, this.checked);
+            });
+            
+            columnsContainer.appendChild(checkboxDiv);
+        });
+    });
+    
+    // Habilitar el botón de continuar
+    document.getElementById('nextStep3').disabled = false;
+}
+
+/**
+ * Actualiza la lista de columnas seleccionadas para un archivo específico
+ */
+function updateSelectedColumns(fileName, column, isSelected) {
+    if (!selectedColumnsByFile[fileName]) {
+        selectedColumnsByFile[fileName] = [];
+    }
+    
+    if (isSelected) {
+        // Agregar columna si no está ya en la lista
+        if (!selectedColumnsByFile[fileName].includes(column)) {
+            selectedColumnsByFile[fileName].push(column);
+        }
+    } else {
+        // Remover columna de la lista
+        selectedColumnsByFile[fileName] = selectedColumnsByFile[fileName].filter(col => col !== column);
+    }
+    
+    console.log(`Columnas seleccionadas para ${fileName}:`, selectedColumnsByFile[fileName]);
+}
+
+/**
+ * Selecciona todas las columnas de todos los archivos
+ */
+function selectAllColumns() {
+    filesData.forEach((fileData, index) => {
+        const availableColumns = fileData.columns.filter(col => 
+            col !== filterColumn
+        );
+        
+        // Actualizar estado
+        selectedColumnsByFile[fileData.name] = [...availableColumns];
+        
+        // Actualizar checkboxes en la UI
+        availableColumns.forEach(column => {
+            const checkboxId = `file-${index}-col-${column.replace(/\s+/g, '-')}`;
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) checkbox.checked = true;
+        });
+    });
+    
+    console.log('Todas las columnas seleccionadas');
+}
+
+/**
+ * Deselecciona todas las columnas de todos los archivos
+ */
+function deselectAllColumns() {
+    filesData.forEach((fileData, index) => {
+        const availableColumns = fileData.columns.filter(col => 
+            col !== filterColumn
+        );
+        
+        // Actualizar estado
+        selectedColumnsByFile[fileData.name] = [];
+        
+        // Actualizar checkboxes en la UI
+        availableColumns.forEach(column => {
+            const checkboxId = `file-${index}-col-${column.replace(/\s+/g, '-')}`;
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) checkbox.checked = false;
+        });
+    });
+    
+    console.log('Todas las columnas deseleccionadas');
+}
+
+// =============================================
+// PROCESAMIENTO Y DESCARGA DE RESULTADOS
+// =============================================
+
+/**
+ * Procesa todos los archivos y genera las descargas
+ */
+async function processAndDownload() {
+    // Validar que al menos una columna esté seleccionada en cada archivo
+    for (const fileName in selectedColumnsByFile) {
+        if (selectedColumnsByFile[fileName].length === 0) {
+            alert(`Por favor, selecciona al menos una columna para el archivo: ${fileName}`);
+            return;
+        }
+    }
+    
+    // Navegar al paso 4 (procesando)
+    document.querySelectorAll('.step-container').forEach(container => {
+        container.style.display = 'none';
+        container.classList.remove('active');
+    });
+    
+    document.getElementById('step4-container').style.display = 'block';
+    document.getElementById('step4-container').classList.add('active');
+    updateStatusBar(4);
+    
+    // Iniciar procesamiento
+    await processFilesWithProgress();
+}
+
+/**
+ * Procesa todos los archivos con barra de progreso
+ */
+async function processFilesWithProgress() {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const totalFiles = uploadedFiles.length;
+    
+    // Inicializar progreso
+    progressBar.style.width = '0%';
+    progressText.textContent = `Iniciando procesamiento de ${totalFiles} archivos...`;
+    
+    try {
+        // Procesar cada archivo
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i];
+            const fileData = filesData[i];
+            
+            // Actualizar progreso
+            const progressPercent = Math.round((i / totalFiles) * 100);
+            progressBar.style.width = `${progressPercent}%`;
+            progressText.textContent = `Procesando archivo ${i+1} de ${totalFiles}: ${file.name}`;
+            
+            // Procesar el archivo actual
+            await processSingleFile(file, fileData);
+            
+            // Pequeña pausa para actualizar la UI
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        // Completar progreso
+        progressBar.style.width = '100%';
+        progressText.textContent = '¡Procesamiento completado!';
+        
+        // Mostrar resultados
+        document.getElementById('downloadResults').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error en el procesamiento:', error);
+        progressText.textContent = `Error: ${error.message}`;
+        progressBar.style.backgroundColor = '#f44336';
+    }
+}
+
+/**
+ * Procesa un solo archivo CSV: filtra y extrae columnas seleccionadas
+ */
+function processSingleFile(file, fileData) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const csvText = event.target.result;
+                const delimiter = detectDelimiter(csvText);
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                
+                if (lines.length === 0) {
+                    reject(new Error(`El archivo ${file.name} está vacío`));
+                    return;
+                }
+                
+                // Leer encabezados
+                const headers = lines[0].split(delimiter).map(h => h.trim().replace(/"/g, ''));
+                
+                // Identificar índices de columnas necesarias
+                const filterColumnIndex = headers.findIndex(h => 
+                    h.toLowerCase() === filterColumn.toLowerCase()
+                );
+                
+                // Obtener columnas seleccionadas para este archivo
+                const selectedColumns = selectedColumnsByFile[file.name] || [];
+                
+                // Identificar índices de columnas seleccionadas
+                const selectedColumnIndices = selectedColumns.map(col => 
+                    headers.findIndex(h => h === col)
+                ).filter(index => index !== -1);
+                
+                // Verificar que la columna de filtro existe
+                if (filterColumnIndex === -1) {
+                    console.warn(`Advertencia: Columna "${filterColumn}" no encontrada en ${file.name}. Se procesará todo el archivo.`);
+                }
+                
+                // Preparar nuevas filas filtradas
+                const newRows = [];
+                
+                // Agregar encabezados (solo columnas seleccionadas)
+                const newHeaders = [...selectedColumns];
+                newRows.push(newHeaders.join(','));
+                
+                // Procesar cada fila de datos
+                for (let rowIndex = 1; rowIndex < lines.length; rowIndex++) {
+                    const line = lines[rowIndex];
+                    const values = parseCSVLine(line, delimiter);
+                    
+                    // Si la columna de filtro existe, aplicar filtro
+                    if (filterColumnIndex !== -1) {
+                        const cellValue = values[filterColumnIndex] || '';
+                        
+                        // Si el valor no coincide con el valor seleccionado, saltar esta fila
+                        if (cellValue.trim() !== selectedProvince) {
+                            continue;
+                        }
+                    }
+                    
+                    // Construir nueva fila con los valores seleccionados
+                    const newRowValues = [];
+                    
+                    // Agregar valores de columnas seleccionadas
+                    selectedColumnIndices.forEach(colIndex => {
+                        let cellValue = values[colIndex] || '';
+    
+                        // SOLO Y EXCLUSIVAMENTE si el valor tiene comas
+                        if (cellValue.includes(',')) {
+                            // Escapar cualquier comilla existente
+                            cellValue = '"' + cellValue.replace(/"/g, '""') + '"';
+                        }
+    
+                        newRowValues.push(cellValue);
+                    });
+                    
+                    newRows.push(newRowValues.join(','));
+                }
+                
+                // Crear nuevo contenido CSV
+                const newCSVContent = newRows.join('\n');
+                
+                // Crear y descargar archivo
+                downloadProcessedFile(file.name, newCSVContent);
+                
+                console.log(`Archivo ${file.name} procesado: ${newRows.length-1} filas encontradas para ${selectedProvince}`);
+                resolve();
+                
+            } catch (error) {
+                reject(new Error(`Error al procesar ${file.name}: ${error.message}`));
+            }
+        };
+        
+        reader.onerror = function() {
+            reject(new Error(`Error al leer el archivo ${file.name}`));
+        };
+        
+        reader.readAsText(file, 'UTF-8');
+    });
+}
+
+/**
+ * Crea y descarga un archivo CSV procesado
+ */
+function downloadProcessedFile(originalName, csvContent) {
+    // Crear nombre de archivo para el resultado
+    const fileName = `Filtrado_${originalName}`;
+    
+    // Crear Blob con el contenido CSV
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // Crear enlace de descarga
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    
+    // Agregar al DOM, hacer clic y remover
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Liberar memoria
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
+/**
+ * Reinicia el proceso para procesar nuevos archivos
+ */
+function restartProcess() {
+    // Resetear variables globales
+    uploadedFiles = [];
+    filesData = [];
+    allColumns.clear();
+    selectedProvince = '';
+    selectedColumnsByFile = {};
+    filterColumn = 'provincia';
+    
+    // Resetear UI
+    document.getElementById('fileList').innerHTML = '';
+    document.getElementById('fileCount').textContent = '0';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('filterColumnSelect').innerHTML = '<option value="" disabled selected>Cargando columnas...</option>';
+    document.getElementById('provinceFilter').innerHTML = '<option value="" disabled selected>Primero selecciona una columna</option>';
+    document.getElementById('provinceFilter').disabled = true;
+    
+    // Actualizar UI del Paso 1
+    updateStep1UI();
+    
+    // Volver al paso 1
+    goToStep1();
+}
+
+// =============================================
+// FIN DEL PROGRAMA
+// =============================================
+
+    </script>
+
+</body>
+</html>
