@@ -121,6 +121,6 @@ Desarrollado para optimizar el flujo de trabajo meteorológico del departamento 
     <a href="https://josedlfi.github.io/FiltradorCSV/Filtrador_CSV_v1.0.html">🔗 Ver aplicación en vivo</a>
   </p>
   <p>
-    <small>📅 Última actualización: Febrero 2026</small>
+    <small>📅 Última actualización: Abril 2026</small>
   </p>
 </div>
