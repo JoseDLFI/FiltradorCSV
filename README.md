@@ -73,7 +73,7 @@ Automatizar el procesamiento manual de archivos de datos climáticos del CMPSS, 
 | Componente | Tecnología |
 |------------|------------|
 | **Lenguajes** | HTML5 + CSS3 + JavaScript vanilla |
-| **APIs** | File API, Blob API, Web Workers (ligero) |
+| **APIs** | File API, Blob API |
 | **Dependencias** | **Sin librerías externas** - 100% independiente |
 
 ---
